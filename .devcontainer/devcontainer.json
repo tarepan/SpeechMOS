@@ -1,0 +1,40 @@
+{
+    "name": "ML PyTorch",
+
+    // "image": "xxx/yyy",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+
+    // poetry in Dockerfile automatically update env file, but it is not yet reloaded on shell. So, we choose direct poetry binary call.
+    "postCreateCommand": "$HOME/.local/bin/poetry install",
+    "remoteUser": "root",
+
+    "customizations": {
+        "vscode": {
+            "settings": {
+                // Interpreter - Python 3.X in devcontainer
+                "defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+                "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+                "python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+                "python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+                "python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+                "python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+                "python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+                "python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+                "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+                // Static type checker - Pyright in Pylance
+                "python.analysis.typeCheckingMode": "strict"
+            },
+            "extensions": [
+                // It install Pylance (`ms-python.vscode-pylance`) automatically
+                "ms-python.python",
+                "yzhang.markdown-all-in-one"
+            ]
+        }
+    }
+}
