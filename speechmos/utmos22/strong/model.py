@@ -4,7 +4,7 @@ import torch
 from torch import nn, Tensor
 import torchaudio # pyright: ignore [reportMissingTypeStubs]
 
-from fairseq_alt import Wav2Vec2Model
+from ..fairseq_alt import Wav2Vec2Model
 
 
 class UTMOS22Strong(nn.Module):
