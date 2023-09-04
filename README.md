@@ -7,9 +7,9 @@
 Predict subjective speech score with only 2 lines of code, with various MOS prediction systems.
 
 ```python
-predictor = torch.hub.load("tarepan/SpeechMOS:main", "utmos22_strong", trust_repo=True)
-score = predictor(wave, sample_rate)
-# xx, good quality speech!
+predictor = torch.hub.load("tarepan/SpeechMOS:v1.0.0", "utmos22_strong", trust_repo=True)
+score = predictor(wave, sr)
+# tensor([3.7730]), good quality speech!
 ```
 
 ## Demo
@@ -20,9 +20,9 @@ import torch
 import librosa
 
 wave, sr = librosa.load("<your_audio>.wav", sr=None, mono=True)
-predictor = torch.hub.load("tarepan/SpeechMOS:main", "utmos22_strong", trust_repo=True)
+predictor = torch.hub.load("tarepan/SpeechMOS:v1.0.0", "utmos22_strong", trust_repo=True)
 score = predictor(torch.from_numpy(wave).unsqueeze(0), sr)
-# 
+# tensor([3.7730])
 ```
 
 ## How to Use
@@ -31,21 +31,22 @@ SpeechMOS use `torch.hub` built-in model loader, so no needs of library importðŸ
 
 First, instantiate a MOS predictor with model specifier string:
 ```python
-predictor = torch.hub.load("tarepan/SpeechMOS:main", "<model_specifier>", trust_repo=True)
+import torch
+predictor = torch.hub.load("tarepan/SpeechMOS:v1.0.0", "<model_specifier>", trust_repo=True)
 ```
 
 Then, pass tensor of speeches :: `(Batch, Time)`:
 ```python
 waves_tensor = torch.rand((2, 16000)) # Two speeches, each 1 sec (sr=16,000)
 score = predictor(waves_tensor, sr=16000)
-#
+# tensor([2.0321, 2.0943])
 ```
 
 Returned scores :: `(Batch,)` are each speech's predicted MOS.  
 If you hope MOS average over speeches (e.g. for TTS model evaluation), just average them:
 ```python
 average_score = score.mean().item()
-#
+# 2.0632
 ```
 
 ## Predictors

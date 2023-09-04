@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "speechmos"
-version = "0.0.1"
+version = "1.0.0"
 description = "Easy-to-Use Speech MOS predictors 🎧"
 authors = ["tarepan"]
 readme = "README.md"

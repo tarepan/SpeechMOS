@@ -8,7 +8,7 @@ from speechmos.utmos22.strong.model import UTMOS22Strong # pylint: disable=wrong
 
 
 URLS = {
-    "utmos22_strong": "https://github.com/tarepan/SpeechMOS/releases/download/v0.0.0/utmos22_strong_step7459.pt",
+    "utmos22_strong": "https://github.com/tarepan/SpeechMOS/releases/download/v1.0.0/utmos22_strong_step7459_v1.pt",
 }
 # [Origin]
 # "utmos22_strong" is derived from official sarulab-speech/UTMOS22 'UTMOS strong learner' checkpoint, under MIT lisence (Copyright 2022 Saruwatari&Koyama laboratory, The University of Tokyo, https://github.com/sarulab-speech/UTMOS22/blob/master/LICENSE).
