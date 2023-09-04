@@ -13,7 +13,7 @@ class UTMOS22Strong(nn.Module):
     def __init__(self):
         """Init."""
 
-        super().__init__()
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
 
         feat_ssl, feat_domain_emb, feat_judge_emb, feat_rnn_h, feat_proj_h = 768, 128, 128, 512, 2048
         feat_cat = feat_ssl + feat_domain_emb + feat_judge_emb
@@ -25,7 +25,7 @@ class UTMOS22Strong(nn.Module):
         self.blstm = nn.LSTM(input_size=feat_cat, hidden_size=feat_rnn_h, batch_first=True, bidirectional=True)
         self.projection = nn.Sequential(nn.Linear(feat_rnn_h*2, feat_proj_h), nn.ReLU(), nn.Linear(feat_proj_h, 1))
 
-    def forward(self, wave: Tensor, sr: int) -> Tensor:
+    def forward(self, wave: Tensor, sr: int) -> Tensor: # pylint: disable=invalid-name
         """wave-to-score :: (B, T) -> (B,) """
 
         # Resampling :: (B, T) -> (B, T)

@@ -24,4 +24,5 @@ disable = [
   # This is opinionated
   "line-too-long",
   "pointless-string-statement",
+  "no-member",
 ]

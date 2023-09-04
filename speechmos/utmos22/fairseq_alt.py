@@ -8,13 +8,15 @@ import torch.nn.functional as F
 
 
 class Wav2Vec2Model(nn.Module):
+    """Wav2Vev2."""
+
     def __init__(self):
-        super().__init__()
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
 
         feat_h1, feat_h2 = 512, 768
         feature_enc_layers = [(feat_h1, 10, 5)] + [(feat_h1, 3, 2)] * 4 + [(feat_h1, 2, 2)] * 2
 
-        self.feature_extractor = ConvFeatureExtractionModel(conv_layers=feature_enc_layers)
+        self.feature_extractor = ConvFeatureExtractionModel(conv_layers=feature_enc_layers) # pyright: ignore [reportGeneralTypeIssues]
         self.layer_norm = nn.LayerNorm(feat_h1)
         self.post_extract_proj = nn.Linear(feat_h1, feat_h2)
         self.dropout_input = nn.Dropout(0.1)
@@ -23,7 +25,7 @@ class Wav2Vec2Model(nn.Module):
         # Remnants
         self.mask_emb = nn.Parameter(torch.FloatTensor(feat_h2))
 
-    def forward(self, source):
+    def forward(self, source: Tensor):
         """FeatureEncoder + ContextTransformer"""
 
         # Feature encoding
@@ -39,10 +41,12 @@ class Wav2Vec2Model(nn.Module):
 
 
 class ConvFeatureExtractionModel(nn.Module):
-    def __init__(self, conv_layers: list[tuple[int, int, int]]):
-        super().__init__()
+    """Feature Encoder."""
 
-        def block(n_in, n_out, k, stride, is_group_norm=False):
+    def __init__(self, conv_layers: list[tuple[int, int, int]]):
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
+
+        def block(n_in: int, n_out: int, k: int, stride: int, is_group_norm: bool = False):
             if is_group_norm:
                 return nn.Sequential(nn.Conv1d(n_in, n_out, k, stride=stride, bias=False), nn.Dropout(p=0.0), nn.GroupNorm(dim, dim, affine=True), nn.GELU())
             else:
@@ -50,24 +54,26 @@ class ConvFeatureExtractionModel(nn.Module):
 
         in_d = 1
         self.conv_layers = nn.ModuleList()
-        for i, cl in enumerate(conv_layers):
-            (dim, k, stride) = cl
-            self.conv_layers.append(block(in_d, dim, k, stride, is_group_norm=(i==0)))
+        for i, params in enumerate(conv_layers):
+            (dim, k, stride) = params
+            self.conv_layers.append(block(in_d, dim, k, stride, is_group_norm = i==0))
             in_d = dim
 
-    def forward(self, x):
+    def forward(self, series: Tensor) -> Tensor:
         """ :: (B, T) -> (B, Feat, Frame)"""
 
-        x = x.unsqueeze(1)
+        series = series.unsqueeze(1)
         for conv in self.conv_layers:
-            x = conv(x)
+            series = conv(series)
 
-        return x
+        return series
 
 
 class TransformerEncoder(nn.Module):
+    """Transformer."""
 
     def build_encoder_layer(self, feat: int):
+        """Layer builder."""
         return TransformerSentenceEncoderLayer(
             embedding_dim=feat,
             ffn_embedding_dim=3072,
@@ -80,7 +86,7 @@ class TransformerEncoder(nn.Module):
         )
 
     def __init__(self, feat: int):
-        super().__init__()
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
 
         self.required_seq_len_multiple = 2
 
@@ -92,7 +98,7 @@ class TransformerEncoder(nn.Module):
         self.layer_norm = nn.LayerNorm(feat)
         self.layers = nn.ModuleList([self.build_encoder_layer(feat) for _ in range(12)])
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
 
         x_conv = self.pos_conv(x.transpose(1, 2)).transpose(1, 2)
         x = x + x_conv
@@ -124,14 +130,15 @@ class TransformerEncoder(nn.Module):
 class SamePad(nn.Module):
     """Tail inverse padding."""
     def __init__(self, kernel_size: int):
-        super().__init__()
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
         assert kernel_size % 2 == 0, "`SamePad` now support only even kernel."
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         return x[:, :, : -1]
 
 
-def pad_to_multiple(x, multiple, dim=-1, value=0):
+def pad_to_multiple(x: Tensor | None, multiple: int, dim: int = -1, value: float = 0) -> tuple[Tensor | None, int]:
+    """Tail padding."""
     # Inspired from https://github.com/lucidrains/local-attention/blob/master/local_attention/local_attention.py#L41
     if x is None:
         return None, 0
@@ -150,8 +157,8 @@ class TransformerSentenceEncoderLayer(nn.Module):
 
     def __init__(
         self,
-        embedding_dim: float,
-        ffn_embedding_dim: float,
+        embedding_dim: int,
+        ffn_embedding_dim: int,
         num_attention_heads: int,
         activation_fn: str,
         dropout: float,
@@ -159,7 +166,7 @@ class TransformerSentenceEncoderLayer(nn.Module):
         activation_dropout: float,
         layer_norm_first: bool,
     ) -> None:
-        super().__init__()
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
 
         assert layer_norm_first == False, "`layer_norm_first` is fixed to `False`"
         assert activation_fn == "gelu", "`activation_fn` is fixed to `gelu`"
@@ -185,7 +192,7 @@ class TransformerSentenceEncoderLayer(nn.Module):
 
         # Res[SegFC-GELU-Do-SegFC-Do]-LN
         residual = x
-        x = F.gelu(self.fc1(x))
+        x = F.gelu(self.fc1(x)) # pyright: ignore [reportUnknownMemberType]
         x = self.dropout2(x)
         x = self.fc2(x)
         x = self.dropout3(x)
@@ -199,7 +206,7 @@ class MultiheadAttention(nn.Module):
     """Multi-headed attention."""
 
     def __init__(self, embed_dim: int, num_heads: int, dropout: float):
-        super().__init__()
+        super().__init__() # pyright: ignore [reportUnknownMemberType]
 
         self.embed_dim, self.num_heads, self.p_dropout = embed_dim, num_heads, dropout
         self.q_proj   = nn.Linear(embed_dim, embed_dim, bias=True)
