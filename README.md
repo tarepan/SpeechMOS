@@ -27,7 +27,7 @@ score = predictor(torch.from_numpy(wave).unsqueeze(0), sr)
 
 ## How to Use
 SpeechMOS use `torch.hub` built-in model loader, so no needs of library import😉  
-(As general dependencies, SpeechMOS requires `torch` & `torchaudio`.)  
+(As general dependencies, SpeechMOS requires Python=>3.10, `torch` and `torchaudio`.)  
 
 First, instantiate a MOS predictor with model specifier string:
 ```python
