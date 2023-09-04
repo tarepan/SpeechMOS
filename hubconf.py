@@ -2,7 +2,9 @@
 
 dependencies = ["torch"]
 
-from speechmos.utmos22.strong.model import UTMOS22Strong
+import torch                                             # pylint: disable=wrong-import-position
+
+from speechmos.utmos22.strong.model import UTMOS22Strong # pylint: disable=wrong-import-position
 
 
 URLS = {
@@ -13,7 +15,7 @@ URLS = {
 # Weight transfer code is in my fork (`/demo/utmos_strong_alt`).
 
 
-def utmos22_strong(progress: bool = True) -> UTMOS:
+def utmos22_strong(progress: bool = True) -> UTMOS22Strong:
     """
     `UTMOS strong learner` speech naturalness MOS predictor.
 
@@ -27,7 +29,3 @@ def utmos22_strong(progress: bool = True) -> UTMOS:
     model.eval()
 
     return model
-
-
-if __name__ == '__main__':
-    _utmos = torch.hub.load("tarepan/SpeechMOS:main", "utmos22_strong", trust_repo=True)
