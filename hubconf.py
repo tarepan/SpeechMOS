@@ -1,6 +1,6 @@
 """torch.hub configuration."""
 
-dependencies = ["torch"]
+dependencies = ["torch", "torchaudio"]
 
 import torch                                             # pylint: disable=wrong-import-position
 
