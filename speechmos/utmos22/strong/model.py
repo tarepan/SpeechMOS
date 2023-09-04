@@ -2,6 +2,7 @@
 
 import torch
 from torch import nn, Tensor
+import torchaudio # pyright: ignore [reportMissingTypeStubs]
 
 from fairseq_alt import Wav2Vec2Model
 
@@ -24,8 +25,11 @@ class UTMOS22Strong(nn.Module):
         self.blstm = nn.LSTM(input_size=feat_cat, hidden_size=feat_rnn_h, batch_first=True, bidirectional=True)
         self.projection = nn.Sequential(nn.Linear(feat_rnn_h*2, feat_proj_h), nn.ReLU(), nn.Linear(feat_proj_h, 1))
 
-    def forward(self, wave: Tensor) -> Tensor:
+    def forward(self, wave: Tensor, sr: int) -> Tensor:
         """wave-to-score :: (B, T) -> (B,) """
+
+        # Resampling :: (B, T) -> (B, T)
+        wave = torchaudio.functional.resample(wave, orig_freq=sr, new_freq=16000)
 
         # Feature extraction :: (B, T) -> (B, Frame, Feat)
         unit_series = self.wav2vec2(wave)

@@ -8,7 +8,7 @@ Predict subjective speech score with only 2 lines of code, with various MOS pred
 
 ```python
 predictor = torch.hub.load("tarepan/SpeechMOS:main", "utmos22_strong", trust_repo=True)
-score = predictor(wave)
+score = predictor(wave, sample_rate)
 # xx, good quality speech!
 ```
 
@@ -21,12 +21,13 @@ import librosa
 
 wave, sr = librosa.load("<your_audio>.wav", sr=None, mono=True)
 predictor = torch.hub.load("tarepan/SpeechMOS:main", "utmos22_strong", trust_repo=True)
-score = predictor(torch.from_numpy(wave).unsqueeze(0))
+score = predictor(torch.from_numpy(wave).unsqueeze(0), sr)
 # 
 ```
 
 ## How to Use
 SpeechMOS use `torch.hub` built-in model loader, so no needs of library import😉  
+(As general dependencies, SpeechMOS requires `torch` & `torchaudio`.)  
 
 First, instantiate a MOS predictor with model specifier string:
 ```python
@@ -35,8 +36,8 @@ predictor = torch.hub.load("tarepan/SpeechMOS:main", "<model_specifier>", trust_
 
 Then, pass tensor of speeches :: `(Batch, Time)`:
 ```python
-waves_tensor = torch.rand((2, 16000)) # Two speeches, 16,000 samples per speech
-score = predictor(waves_tensor)
+waves_tensor = torch.rand((2, 16000)) # Two speeches, each 1 sec (sr=16,000)
+score = predictor(waves_tensor, sr=16000)
 #
 ```
 
