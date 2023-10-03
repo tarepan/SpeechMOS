@@ -15,7 +15,7 @@ URLS = {
 # Weight transfer code is in my fork (`/demo/utmos_strong_alt`).
 
 
-def utmos22_strong(progress: bool = True) -> UTMOS22Strong:
+def utmos22_strong(progress: bool = True, pretrained: bool = True) -> UTMOS22Strong:
     """
     `UTMOS strong learner` speech naturalness MOS predictor.
 
@@ -23,9 +23,15 @@ def utmos22_strong(progress: bool = True) -> UTMOS22Strong:
         progress - Whether to show model checkpoint load progress
     """
 
-    state_dict = torch.hub.load_state_dict_from_url(url=URLS["utmos22_strong"], map_location="cpu", progress=progress)
+    # Init
     model = UTMOS22Strong()
-    model.load_state_dict(state_dict)
+
+    # Pretrained weights
+    if pretrained:
+        state_dict = torch.hub.load_state_dict_from_url(url=URLS["utmos22_strong"], map_location="cpu", progress=progress)
+        model.load_state_dict(state_dict)
+
+    # Mode
     model.eval()
 
     return model
