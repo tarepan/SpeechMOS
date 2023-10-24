@@ -1,6 +1,7 @@
 """W2V2 model optimized to UTMOS22 strong learner inference. Origin cloned from FairSeq under MIT license (Copyright Facebook, Inc. and its affiliates., https://github.com/facebookresearch/fairseq/blob/main/LICENSE)."""
 
 import math
+from typing import List, Tuple, Optional
 
 import torch
 from torch import nn, Tensor
@@ -43,7 +44,7 @@ class Wav2Vec2Model(nn.Module):
 class ConvFeatureExtractionModel(nn.Module):
     """Feature Encoder."""
 
-    def __init__(self, conv_layers: list[tuple[int, int, int]]):
+    def __init__(self, conv_layers: List[Tuple[int, int, int]]):
         super().__init__() # pyright: ignore [reportUnknownMemberType]
 
         def block(n_in: int, n_out: int, k: int, stride: int, is_group_norm: bool = False):
@@ -137,7 +138,7 @@ class SamePad(nn.Module):
         return x[:, :, : -1]
 
 
-def pad_to_multiple(x: Tensor | None, multiple: int, dim: int = -1, value: float = 0) -> tuple[Tensor | None, int]:
+def pad_to_multiple(x: Optional[Tensor], multiple: int, dim: int = -1, value: float = 0) -> Tuple[Optional[Tensor], int]:
     """Tail padding."""
     # Inspired from https://github.com/lucidrains/local-attention/blob/master/local_attention/local_attention.py#L41
     if x is None:
@@ -182,7 +183,7 @@ class TransformerSentenceEncoderLayer(nn.Module):
         self.self_attn_layer_norm = nn.LayerNorm(feat)
         self.final_layer_norm     = nn.LayerNorm(feat)
 
-    def forward(self, x: Tensor, self_attn_padding_mask: Tensor | None):
+    def forward(self, x: Tensor, self_attn_padding_mask: Optional[Tensor]):
         # Res[Attn-Do]-LN
         residual = x
         x = self.self_attn(x, x, x, self_attn_padding_mask)
@@ -214,7 +215,7 @@ class MultiheadAttention(nn.Module):
         self.v_proj   = nn.Linear(embed_dim, embed_dim, bias=True)
         self.out_proj = nn.Linear(embed_dim, embed_dim, bias=True)
 
-    def forward(self, query: Tensor, key: Tensor, value: Tensor, key_padding_mask: Tensor | None) -> Tensor:
+    def forward(self, query: Tensor, key: Tensor, value: Tensor, key_padding_mask: Optional[Tensor]) -> Tensor:
         """
         Args:
             query            :: (T, B, Feat)
