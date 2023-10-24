@@ -1,7 +1,7 @@
 """W2V2 model optimized to UTMOS22 strong learner inference. Origin cloned from FairSeq under MIT license (Copyright Facebook, Inc. and its affiliates., https://github.com/facebookresearch/fairseq/blob/main/LICENSE)."""
 
 import math
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 import torch
 from torch import nn, Tensor
