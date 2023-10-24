@@ -7,7 +7,7 @@ readme = "README.md"
 repository = "https://github.com/tarepan/SpeechMOS"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 ## Poetry is not good for version control of PyTorch (it has many many variants for a version, so poetry become confused)
 ## torch = "2.0.0"
 ## torchaudio = "2.0.1"
