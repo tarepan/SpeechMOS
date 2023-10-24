@@ -1,7 +1,7 @@
 ## Summary
 Thanks for your PullRequest!  
 Write a summary here within 3 lines.  
-At least, you must include related Issue number #x.  
+At least, you must include related Issue number #i.  
 
 ## Check List
 (`[x]` means 'checked')
@@ -10,7 +10,7 @@ At least, you must include related Issue number #x.
 - [ ] Test passed locally
 
 ## Related Issues
-#x
+- #i
 
 ## Notes
 Anything you want to write.
